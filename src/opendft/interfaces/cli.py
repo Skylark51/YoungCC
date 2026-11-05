@@ -4,12 +4,13 @@ import argparse
 import sys
 from pathlib import Path
 
+from ..inputs.gaussian import parse_gaussian
 from ..inputs.molecule import read_input
 from ..reporting.output import calculate
 
 
 def main():
-    parser = argparse.ArgumentParser(description="YoungCC single point, JSON or Gaussian .gjf/.com input")
+    parser = argparse.ArgumentParser(description="YoungCC single point, JSON or Gaussian .inp/.gjf/.com input")
     parser.add_argument("input", type=Path, help="JSON or Gaussian input")
     parser.add_argument("-o", "--output", type=Path, help="Output prefix (default: INPUT.youngcc)")
     parser.add_argument("--max-cycles", type=int, default=80)
@@ -18,7 +19,11 @@ def main():
     if Path(f"{prefix}.json").resolve() == args.input.resolve():
         parser.error("The output JSON must differ from the input file.")
     try:
-        result = calculate(read_input(args.input), prefix, max_cycles=args.max_cycles)
+        if args.input.suffix.lower() == ".inp":
+            molecule = parse_gaussian(args.input.read_text(encoding="utf-8-sig"))
+        else:
+            molecule = read_input(args.input)
+        result = calculate(molecule, prefix, max_cycles=args.max_cycles)
     except (ValueError, OSError, ArithmeticError, RuntimeError) as error:
         print(f"YoungCC: {error}", file=sys.stderr)
         return 2
