@@ -10,7 +10,14 @@ from .input import parse_input
 def parse_gaussian(text):
     lines = text.replace("\r\n", "\n").split("\n")
     i = 0
+    link0 = {}
     while i < len(lines) and (not lines[i].strip() or lines[i].lstrip().startswith("%")):
+        item = lines[i].strip()
+        if item.startswith("%"):
+            parallel = re.fullmatch(r"%nprocshared\s*=\s*(\d+)", item, flags=re.I)
+            if not parallel:
+                raise ValueError(f"Unsupported Gaussian Link0 directive: {item}")
+            link0["threads"] = int(parallel.group(1))
         i += 1
     if i == len(lines) or not lines[i].lstrip().startswith("#"):
         raise ValueError("Expected Gaussian route section starting with #.")
@@ -24,7 +31,7 @@ def parse_gaussian(text):
     if not method_basis:
         raise ValueError("Only B3LYP/def2SVP and UB3LYP/def2TZVPP single-point routes are supported.")
     data = {"method": method_basis.group(1).upper(), "basis": method_basis.group(2).upper(),
-            "units": "angstrom"}
+            "units": "angstrom", **link0}
     route = route[:method_basis.start()] + " " + route[method_basis.end():]
     pcm = re.search(r"\bscrf\s*=\s*\(([^)]*)\)", route)
     if pcm:
