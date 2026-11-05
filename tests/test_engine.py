@@ -55,7 +55,7 @@ def test_xc_potential_is_energy_density_derivative():
 
 
 @pytest.mark.parametrize("changes", [
-    {"charge": 1}, {"charge": -2}, {"multiplicity": 3}, {"method": "B3LYP"},
+    {"charge": 1}, {"charge": -2}, {"multiplicity": 3}, {"method": "PBE0"},
     {"basis": "6-31G"}, {"atoms": [["He", 0, 0, float("nan")]]},
     {"atoms": [["He", 0, 0, 0], ["H", 0, 0, 0]]},
 ])

@@ -1,0 +1,9 @@
+%nprocshared=1
+#p UB3LYP/def2SVP SCRF=(CPCM,Solvent=Acetonitrile) EmpiricalDispersion=GD3BJ
+
+OH radical YoungCC single-point example
+
+0 2
+O 0.0 0.0 0.0
+H 0.0 0.0 0.97
+

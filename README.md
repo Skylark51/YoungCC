@@ -69,3 +69,22 @@ OPENBLAS_NUM_THREADS=1 python benchmarks/gaussian16/compare.py compare build/gau
 ## 1차 범위
 
 적분 엔진은 실수 Cartesian s/p 함수와 조밀한 4차원 ERI 배열을 사용합니다. LDA는 원자 중심 Becke 분할과 자체 구적법을 사용합니다. 열린껍질, 추가 기저와 원소, 구조 최적화, 진동수, TS 탐색 및 병렬화는 후속 단계입니다. 구현 구조와 이론 출처는 [개발 노트](docs/design.md)를 참고하세요.
+
+## 2차 기능: UB3LYP/def2-SVP/def2-TZVPP/C-PCM/D3(BJ)
+
+추가 백엔드는 PySCF 기반입니다. 기존 RHF/LDA 엔진은 유지되며
+UB3LYP/B3LYP 계산은 PySCF의 UKS 전자구조 계산을 사용합니다.
+
+```sh
+python -m pip install -e ".[advanced,test]"
+youngcc examples/oh_ub3lyp.gjf -o build/oh_ub3lyp
+python -m pytest -q
+```
+
+JSON과 Gaussian 형식 .gjf/.com 단일점 입력의 일부를 지원합니다.
+지원하지 않는 Opt, Freq, IRC, Geom=Check, Guess=Read 등은 명시적으로 거부합니다.
+출력 로그 하단에 YOUNGCC FINAL SUMMARY가 추가됩니다.
+이 기능은 Gaussian 16과의 결과 일치를 아직 검증하지 않았습니다.
+
+자세한 범위와 Gaussian 공식 문서 참조는 [advanced-backend.md](docs/advanced-backend.md)를 확인하세요.
+기존 문서의 1차 범위 설명은 자체 구현 RHF/LDA 엔진을 대상으로 합니다.

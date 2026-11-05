@@ -1,0 +1,23 @@
+{
+  "method": "UB3LYP",
+  "basis": "def2-SVP",
+  "units": "angstrom",
+  "charge": 0,
+  "multiplicity": 2,
+  "solvent": "MeCN",
+  "dispersion": "GD3BJ",
+  "atoms": [
+    [
+      "O",
+      0,
+      0,
+      0
+    ],
+    [
+      "H",
+      0,
+      0,
+      0.97
+    ]
+  ]
+}
