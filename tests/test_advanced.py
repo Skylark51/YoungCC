@@ -29,6 +29,7 @@ H 0.0 0.0 0.97
 """
     mol = parse_gaussian(route)
     assert mol.electrons == 9
+    assert mol.threads == 8
     assert mol.solvent == "acetonitrile"
     assert mol.dispersion == "D3BJ"
 
@@ -82,3 +83,7 @@ def test_advanced_output(tmp_path):
     assert result.converged
     assert data["occupied_orbitals"] == {"alpha": 5, "beta": 4}
     assert "YOUNGCC FINAL SUMMARY" in log
+
+def test_unsupported_link0_is_rejected():
+    with pytest.raises(ValueError, match="Link0"):
+        parse_gaussian("%chk=a.chk\n#p UB3LYP/def2SVP\n\nTitle\n\n0 2\nO 0 0 0\nH 0 0 1\n")
