@@ -1,0 +1,21 @@
+{
+  "method": "RHF",
+  "basis": "STO-3G",
+  "charge": 0,
+  "multiplicity": 1,
+  "units": "angstrom",
+  "atoms": [
+    [
+      "H",
+      0,
+      0,
+      -0.37
+    ],
+    [
+      "H",
+      0,
+      0,
+      0.37
+    ]
+  ]
+}

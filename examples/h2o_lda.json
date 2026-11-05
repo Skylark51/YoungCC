@@ -1,0 +1,27 @@
+{
+  "method": "LDA",
+  "basis": "STO-3G",
+  "charge": 0,
+  "multiplicity": 1,
+  "units": "angstrom",
+  "atoms": [
+    [
+      "O",
+      0,
+      0,
+      0
+    ],
+    [
+      "H",
+      0,
+      0.757,
+      0.587
+    ],
+    [
+      "H",
+      0,
+      -0.757,
+      0.587
+    ]
+  ]
+}

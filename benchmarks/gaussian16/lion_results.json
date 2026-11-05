@@ -1,0 +1,404 @@
+{
+  "h2_lda": {
+    "youngcc_total_energy_eh": -1.121206115452553,
+    "reference_total_energy_eh": -1.12120611538,
+    "total_energy_error_eh": {
+      "max_absolute": 7.255307465925398e-11,
+      "relative_to_reference_max": 6.470984564213178e-11
+    },
+    "energy_target_eh": 0.001,
+    "energy_target_passed": true,
+    "orbital_energy_error_eh": {
+      "max_absolute": 3.4957520211875703e-10,
+      "relative_to_reference_max": 8.713318647593752e-10
+    },
+    "electron_density_probe_error_e_per_bohr3": {
+      "max_absolute": 1.1693201962259536e-11,
+      "relative_to_reference_max": 4.4043841310921177e-11
+    },
+    "density_probe_points_bohr": [
+      [
+        0.17,
+        0.23,
+        -0.38919866611153503
+      ],
+      [
+        0.4,
+        -0.6,
+        0.0008013338884649279
+      ],
+      [
+        -1.0,
+        0.8,
+        -1.199198666111535
+      ],
+      [
+        0.17,
+        0.23,
+        1.009198666111535
+      ],
+      [
+        0.4,
+        -0.6,
+        1.399198666111535
+      ],
+      [
+        -1.0,
+        0.8,
+        0.19919866611153503
+      ]
+    ],
+    "electron_count_error": {
+      "max_absolute": 0.0,
+      "relative_to_reference_max": 0.0
+    },
+    "youngcc_analytic_electron_count": 2.0,
+    "youngcc_grid_electron_count": 2.0000000000023093,
+    "reference_electron_count": 2.0,
+    "youngcc_scf": {
+      "converged": true,
+      "cycles": 2,
+      "seconds": 0.10320744104683399
+    },
+    "reference_scf": {
+      "converged": true,
+      "cycles": 3,
+      "seconds": 0.3
+    }
+  },
+  "h2_rhf": {
+    "youngcc_total_energy_eh": -1.116759307506359,
+    "reference_total_energy_eh": -1.11675930751,
+    "total_energy_error_eh": {
+      "max_absolute": 3.640865386955738e-12,
+      "relative_to_reference_max": 3.2602059928863736e-12
+    },
+    "energy_target_eh": 0.001,
+    "energy_target_passed": true,
+    "orbital_energy_error_eh": {
+      "max_absolute": 1.9124468675357775e-10,
+      "relative_to_reference_max": 2.8495350295850856e-10
+    },
+    "electron_density_probe_error_e_per_bohr3": {
+      "max_absolute": 1.169336849571323e-11,
+      "relative_to_reference_max": 4.4044468579057924e-11
+    },
+    "density_probe_points_bohr": [
+      [
+        0.17,
+        0.23,
+        -0.38919866611153503
+      ],
+      [
+        0.4,
+        -0.6,
+        0.0008013338884649279
+      ],
+      [
+        -1.0,
+        0.8,
+        -1.199198666111535
+      ],
+      [
+        0.17,
+        0.23,
+        1.009198666111535
+      ],
+      [
+        0.4,
+        -0.6,
+        1.399198666111535
+      ],
+      [
+        -1.0,
+        0.8,
+        0.19919866611153503
+      ]
+    ],
+    "electron_count_error": {
+      "max_absolute": 4.440892098500626e-16,
+      "relative_to_reference_max": 2.220446049250313e-16
+    },
+    "youngcc_analytic_electron_count": 1.9999999999999996,
+    "youngcc_grid_electron_count": null,
+    "reference_electron_count": 2.0,
+    "youngcc_scf": {
+      "converged": true,
+      "cycles": 2,
+      "seconds": 0.005043976940214634
+    },
+    "reference_scf": {
+      "converged": true,
+      "cycles": 1,
+      "seconds": 0.3
+    }
+  },
+  "h2o_lda": {
+    "youngcc_total_energy_eh": -74.73210486277547,
+    "reference_total_energy_eh": -74.7321048955,
+    "total_energy_error_eh": {
+      "max_absolute": 3.272452886449173e-08,
+      "relative_to_reference_max": 4.3789117020390846e-10
+    },
+    "energy_target_eh": 0.001,
+    "energy_target_passed": true,
+    "orbital_energy_error_eh": {
+      "max_absolute": 4.8583501666144e-09,
+      "relative_to_reference_max": 2.65905619504432e-10
+    },
+    "electron_density_probe_error_e_per_bohr3": {
+      "max_absolute": 7.623341402585027e-10,
+      "relative_to_reference_max": 6.662087770254531e-10
+    },
+    "density_probe_points_bohr": [
+      [
+        0.17,
+        0.23,
+        0.31
+      ],
+      [
+        0.4,
+        -0.6,
+        0.7
+      ],
+      [
+        -1.0,
+        0.8,
+        -0.5
+      ],
+      [
+        0.17,
+        1.660522676341708,
+        1.419269235155327
+      ],
+      [
+        0.4,
+        0.8305226763417081,
+        1.809269235155327
+      ],
+      [
+        -1.0,
+        2.230522676341708,
+        0.609269235155327
+      ],
+      [
+        0.17,
+        -1.200522676341708,
+        1.419269235155327
+      ],
+      [
+        0.4,
+        -2.030522676341708,
+        1.809269235155327
+      ],
+      [
+        -1.0,
+        -0.630522676341708,
+        0.609269235155327
+      ]
+    ],
+    "electron_count_error": {
+      "max_absolute": 0.0,
+      "relative_to_reference_max": 0.0
+    },
+    "youngcc_analytic_electron_count": 10.0,
+    "youngcc_grid_electron_count": 9.999999993825277,
+    "reference_electron_count": 10.0,
+    "youngcc_scf": {
+      "converged": true,
+      "cycles": 8,
+      "seconds": 0.6529229050502181
+    },
+    "reference_scf": {
+      "converged": true,
+      "cycles": 13,
+      "seconds": 0.6
+    }
+  },
+  "h2o_rhf": {
+    "youngcc_total_energy_eh": -74.9630631541378,
+    "reference_total_energy_eh": -74.9630631539,
+    "total_energy_error_eh": {
+      "max_absolute": 2.3780444280419033e-10,
+      "relative_to_reference_max": 3.17228822835021e-12
+    },
+    "energy_target_eh": 0.001,
+    "energy_target_passed": true,
+    "orbital_energy_error_eh": {
+      "max_absolute": 2.2893935636147944e-08,
+      "relative_to_reference_max": 1.1310133971837135e-09
+    },
+    "electron_density_probe_error_e_per_bohr3": {
+      "max_absolute": 5.349087839334743e-10,
+      "relative_to_reference_max": 4.690243667042756e-10
+    },
+    "density_probe_points_bohr": [
+      [
+        0.17,
+        0.23,
+        0.31
+      ],
+      [
+        0.4,
+        -0.6,
+        0.7
+      ],
+      [
+        -1.0,
+        0.8,
+        -0.5
+      ],
+      [
+        0.17,
+        1.660522676341708,
+        1.419269235155327
+      ],
+      [
+        0.4,
+        0.8305226763417081,
+        1.809269235155327
+      ],
+      [
+        -1.0,
+        2.230522676341708,
+        0.609269235155327
+      ],
+      [
+        0.17,
+        -1.200522676341708,
+        1.419269235155327
+      ],
+      [
+        0.4,
+        -2.030522676341708,
+        1.809269235155327
+      ],
+      [
+        -1.0,
+        -0.630522676341708,
+        0.609269235155327
+      ]
+    ],
+    "electron_count_error": {
+      "max_absolute": 1.7763568394002505e-15,
+      "relative_to_reference_max": 1.7763568394002506e-16
+    },
+    "youngcc_analytic_electron_count": 10.000000000000002,
+    "youngcc_grid_electron_count": null,
+    "reference_electron_count": 10.0,
+    "youngcc_scf": {
+      "converged": true,
+      "cycles": 9,
+      "seconds": 0.28426518896594644
+    },
+    "reference_scf": {
+      "converged": true,
+      "cycles": 10,
+      "seconds": 0.3
+    }
+  },
+  "he_lda": {
+    "youngcc_total_energy_eh": -2.7718860435848063,
+    "reference_total_energy_eh": -2.77188604346,
+    "total_energy_error_eh": {
+      "max_absolute": 1.2480638744705175e-10,
+      "relative_to_reference_max": 4.502580029995118e-11
+    },
+    "energy_target_eh": 0.001,
+    "energy_target_passed": true,
+    "orbital_energy_error_eh": {
+      "max_absolute": 6.918560169211219e-11,
+      "relative_to_reference_max": 1.4158769088580605e-10
+    },
+    "electron_density_probe_error_e_per_bohr3": {
+      "max_absolute": 0.0,
+      "relative_to_reference_max": 0.0
+    },
+    "density_probe_points_bohr": [
+      [
+        0.17,
+        0.23,
+        0.31
+      ],
+      [
+        0.4,
+        -0.6,
+        0.7
+      ],
+      [
+        -1.0,
+        0.8,
+        -0.5
+      ]
+    ],
+    "electron_count_error": {
+      "max_absolute": 4.440892098500626e-16,
+      "relative_to_reference_max": 2.220446049250313e-16
+    },
+    "youngcc_analytic_electron_count": 2.0000000000000004,
+    "youngcc_grid_electron_count": 1.999999999999985,
+    "reference_electron_count": 2.0,
+    "youngcc_scf": {
+      "converged": true,
+      "cycles": 2,
+      "seconds": 0.014678651001304388
+    },
+    "reference_scf": {
+      "converged": true,
+      "cycles": 3,
+      "seconds": 0.3
+    }
+  },
+  "he_rhf": {
+    "youngcc_total_energy_eh": -2.8077839566141973,
+    "reference_total_energy_eh": -2.80778395662,
+    "total_energy_error_eh": {
+      "max_absolute": 5.802469615900918e-12,
+      "relative_to_reference_max": 2.0665655568763597e-12
+    },
+    "energy_target_eh": 0.001,
+    "energy_target_passed": true,
+    "orbital_energy_error_eh": {
+      "max_absolute": 2.9646796129156883e-10,
+      "relative_to_reference_max": 3.3842002816576337e-10
+    },
+    "electron_density_probe_error_e_per_bohr3": {
+      "max_absolute": 0.0,
+      "relative_to_reference_max": 0.0
+    },
+    "density_probe_points_bohr": [
+      [
+        0.17,
+        0.23,
+        0.31
+      ],
+      [
+        0.4,
+        -0.6,
+        0.7
+      ],
+      [
+        -1.0,
+        0.8,
+        -0.5
+      ]
+    ],
+    "electron_count_error": {
+      "max_absolute": 4.440892098500626e-16,
+      "relative_to_reference_max": 2.220446049250313e-16
+    },
+    "youngcc_analytic_electron_count": 2.0000000000000004,
+    "youngcc_grid_electron_count": null,
+    "reference_electron_count": 2.0,
+    "youngcc_scf": {
+      "converged": true,
+      "cycles": 2,
+      "seconds": 0.0011468371376395226
+    },
+    "reference_scf": {
+      "converged": true,
+      "cycles": 1,
+      "seconds": 0.2
+    }
+  }
+}
