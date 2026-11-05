@@ -29,7 +29,7 @@ H 0.0 0.0 0.97
 """
     mol = parse_gaussian(route)
     assert mol.electrons == 9
-    assert mol.solvent == "Acetonitrile"
+    assert mol.solvent == "acetonitrile"
     assert mol.dispersion == "D3BJ"
 
 @pytest.mark.parametrize("option", ["Opt", "Freq", "IRC", "Guess=Read",
