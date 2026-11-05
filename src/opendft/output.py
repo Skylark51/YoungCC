@@ -41,6 +41,8 @@ def calculate(molecule, prefix, *, emit=print, **scf_options):
         write("========== YOUNGCC FINAL SUMMARY ==========")
         write(f"Status            {'CONVERGED' if result.converged else 'NOT CONVERGED'}")
         write(f"Method / Basis    {molecule.method} / {molecule.basis}")
+        if molecule.threads is not None:
+            write(f"Shared threads    {molecule.threads}")
         write(f"Solvent           {molecule.solvent or 'gas phase'}")
         write(f"Dispersion        {molecule.dispersion or 'none'}")
         if hasattr(result, "dispersion_energy"):
@@ -55,6 +57,7 @@ def calculate(molecule, prefix, *, emit=print, **scf_options):
             "charge": molecule.charge, "multiplicity": molecule.multiplicity,
             "solvent": molecule.solvent, "dielectric": molecule.dielectric,
             "dispersion": molecule.dispersion, "grid_level": molecule.grid_level,
+            "threads": molecule.threads,
             "units": "bohr",
             "atoms": [[symbol, *center] for symbol, center in zip(molecule.symbols, molecule.centers)],
         },
