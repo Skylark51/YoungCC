@@ -1,0 +1,6 @@
+%chk=/scratch/skylark/MalonicAcid-restart-check.chk
+%oldchk=/home/skylark/test/MalonicAcid-restart-validation.uoYVwQNJ/source-scan.chk
+%CPU=0-15
+%mem=60Gb
+#p opt=restart
+

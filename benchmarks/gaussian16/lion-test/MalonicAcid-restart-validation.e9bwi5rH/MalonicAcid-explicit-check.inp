@@ -1,0 +1,6 @@
+%chk=/scratch/skylark/MalonicAcid-explicit-check.chk
+%oldchk=/home/skylark/test/MalonicAcid-restart-validation.e9bwi5rH/source-scan.chk
+%CPU=0-15
+%mem=60Gb
+#p ub3lyp/def2svp scrf=(cpcm,solvent=acetonitrile) opt=(modredundant,restart) scf=(xqc)
+

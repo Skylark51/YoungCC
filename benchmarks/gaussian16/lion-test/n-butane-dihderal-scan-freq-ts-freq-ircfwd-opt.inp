@@ -1,0 +1,10 @@
+%oldchk=/home/skylark/chk/n-butane-dihderal-scan-freq-ts-freq-ircfwd.chk
+%chk=/scratch/skylark/n-butane-dihderal-scan-freq-ts-freq-ircfwd-opt.chk
+%CPU=0-15
+%mem=60Gb
+#p ub3lyp/def2svp scrf=(cpcm,solvent=acetonitrile) opt guess=read geom=check scf=(xqc,maxconventionalcycles=60) nosymm EmpiricalDispersion=GD3BJ
+
+opt
+
+0 1
+

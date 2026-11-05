@@ -1,0 +1,10 @@
+%chk=/scratch/skylark/MalonicAcid-scan-freq-ts-freq-ircrev.chk
+%oldchk=/home/skylark/chk/MalonicAcid-scan-freq-ts-freq.chk
+%CPU=0-15
+%mem=60Gb
+#p ub3lyp/def2svp scrf=(cpcm,solvent=acetonitrile) irc=(rcfc,reverse,lqa,stepsize=25)  scf=(xqc,maxconventionalcycles=60) nosymm guess=read geom=check
+
+MalonicAcid-scan-freq-ts-freq-ircrev
+
+0 1
+
