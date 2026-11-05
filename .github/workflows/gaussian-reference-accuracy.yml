@@ -1,0 +1,40 @@
+name: Gaussian16 reference accuracy
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'benchmarks/gaussian16/**'
+      - 'src/opendft/**'
+      - 'tests/test_lion_reference_accuracy.py'
+      - '.github/workflows/gaussian-reference-accuracy.yml'
+
+jobs:
+  compare:
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        case: [ts_svp, ts_tzvpp, min_svp, min_tzvpp]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      OPENBLAS_NUM_THREADS: '2'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e ".[advanced,test]"
+      - name: Verify archived Gaussian reference
+        run: python -m pytest -q tests/test_lion_reference_accuracy.py
+      - name: Run YoungCC at fixed Gaussian geometry
+        run: python benchmarks/gaussian16/lion_reference_accuracy.py --case ${{ matrix.case }} --run --output build/reference-${{ matrix.case }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: accuracy-${{ matrix.case }}
+          path: build/reference-${{ matrix.case }}.json
+          if-no-files-found: warn
