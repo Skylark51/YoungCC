@@ -50,3 +50,25 @@ outputs here. A separate Gaussian D3(BJ) reference remains necessary.
    energies including thermal corrections.
 
 Gaussian primary input documentation: https://gaussian.com/
+
+
+## Observed YoungCC/PySCF results (GitHub Actions, 2026-11-05)
+
+CI run: https://github.com/Skylark51/YoungCC/actions/runs/41988473217
+
+| Case | Gaussian (Eh) | YoungCC (Eh) | YoungCC - Gaussian (mEh) |
+|---|---:|---:|---:|
+| TS def2-SVP | -345.554981665 | -345.557132609 | -2.150944 |
+| Min def2-SVP | -345.557581541 | -345.559788712 | -2.207171 |
+| TS def2-TZVPP | -345.954367965 | -345.956904682 | -2.536717 |
+| Min def2-TZVPP | -345.957709189 | -345.960280327 | -2.571138 |
+
+| Basis | Gaussian TS - Min (kcal/mol) | YoungCC TS - Min (kcal/mol) | Difference |
+|---|---:|---:|---:|
+| def2-SVP | 1.6314 | 1.6667 | +0.0353 |
+| def2-TZVPP | 2.0966 | 2.1182 | +0.0216 |
+
+All four standalone UKS single-point jobs converged. These are observed
+numerical comparisons, **not matched-cavity or matched-grid accuracy claims**.
+The reference outputs use UFF PCM cavity radii while the PySCF backend used
+its default cavity; no Opt/TS/IRC or D3(BJ) reference equivalence was tested.
