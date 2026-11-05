@@ -23,6 +23,7 @@ class Molecule:
     dielectric: float | None = None
     dispersion: str | None = None
     grid_level: int = 3
+    threads: int | None = None
 
     @property
     def charges(self):
@@ -37,7 +38,7 @@ def parse_input(data):
     if not isinstance(data, dict):
         raise ValueError("Input must be a JSON object.")
     unknown = data.keys() - {"atoms", "units", "charge", "multiplicity", "method", "basis",
-                              "solvent", "dielectric", "dispersion", "grid_level"}
+                              "solvent", "dielectric", "dispersion", "grid_level", "threads"}
     if unknown:
         raise ValueError(f"Unknown input fields: {', '.join(sorted(unknown))}")
     method = str(data.get("method", "RHF")).upper()
@@ -97,8 +98,11 @@ def parse_input(data):
     level = data.get("grid_level", 3)
     if type(level) is not int or not 0 <= level <= 9:
         raise ValueError("grid_level must be an integer 0 to 9.")
+    threads = data.get("threads")
+    if threads is not None and (type(threads) is not int or not 1 <= threads <= 256):
+        raise ValueError("threads must be an integer between 1 and 256.")
     mol = Molecule(symbols, centers, charge, multiplicity, method, basis, solvent,
-                   dielectric, dispersion, level)
+                   dielectric, dispersion, level, threads)
     spin = multiplicity - 1
     if advanced:
         if mol.electrons <= 0 or spin > mol.electrons or (mol.electrons - spin) % 2:
