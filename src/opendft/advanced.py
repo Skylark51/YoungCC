@@ -33,7 +33,7 @@ def run_advanced(molecule, *, max_cycles=80, energy_tol=1e-9, report=None):
     if max_cycles < 1 or not (0 < energy_tol < float("inf")):
         raise ValueError("Invalid convergence settings.")
     try:
-        from pyscf import dft, gto
+        from pyscf import dft, gto, lib
     except ImportError as exc:
         raise RuntimeError('Install advanced dependencies: pip install -e ".[advanced]"') from exc
     if molecule.dispersion:
@@ -41,6 +41,8 @@ def run_advanced(molecule, *, max_cycles=80, energy_tol=1e-9, report=None):
             import pyscf.dispersion  # noqa: F401
         except ImportError as exc:
             raise RuntimeError('D3(BJ) requires pyscf-dispersion: pip install -e ".[advanced]"') from exc
+    if molecule.threads is not None:
+        lib.num_threads(molecule.threads)
     start = perf_counter()
     mol = gto.Mole()
     mol.atom = [(symbol, tuple(center)) for symbol, center in zip(molecule.symbols, molecule.centers)]
