@@ -40,7 +40,7 @@ def test_unsupported_route(option):
                        "\n\nTitle\n\n0 2\nO 0 0 0\nH 0 0 1\n")
 
 @pytest.mark.parametrize("change", [
-    {"multiplicity": 1}, {"multiplicity": 4}, {"dielectric": 1},
+    {"multiplicity": 1}, {"multiplicity": 3}, {"dielectric": 1},
     {"solvent": ""}, {"dispersion": "GD3"}, {"grid_level": 12},
 ])
 def test_bad_advanced_input(change):
