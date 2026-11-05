@@ -88,3 +88,14 @@ JSON과 Gaussian 형식 .gjf/.com 단일점 입력의 일부를 지원합니다.
 
 자세한 범위와 Gaussian 공식 문서 참조는 [advanced-backend.md](docs/advanced-backend.md)를 확인하세요.
 기존 문서의 1차 범위 설명은 자체 구현 RHF/LDA 엔진을 대상으로 합니다.
+
+
+## 병렬 에이전트 개발을 위한 모듈 구조
+
+화학 계산 기초 모듈(chemistry), 입력(inputs), 자체 엔진(engines/native),
+PySCF 백엔드(engines/pyscf_backend), 결과 출력(reporting), UI(interfaces)를
+각각 별도 패키지로 분리했다. 기존 opendft.* 임포트와 CLI 명령은
+호환 계층으로 유지한다. 실제 기준 입력/출력은 복제하지 않는다.
+
+각 폴더의 변경 책임, 독립 브랜치/워크트리 관리, 에이전트별 작업 지시:
+[Multi-agent workspaces](docs/multi-agent-workspaces.md). 루트 [AGENTS.md](AGENTS.md) 참고.
