@@ -7,7 +7,8 @@ import re
 import numpy as np
 
 from ..inputs.gaussian import parse_gaussian
-from ..inputs.molecule import ANGSTROM_PER_BOHR
+from ..inputs.molecule import ANGSTROM_PER_BOHR, ELEMENTS
+from .pcm_profile import validate_cavity
 
 
 @dataclass(frozen=True)
@@ -21,9 +22,10 @@ class Job:
     guess_read: bool
     memory_mb: float | None
     conventional_cycles: int | None
+    pcm_cavity: str = "native"
 
 
-def read_job(text, protected_paths):
+def read_job(text, protected_paths, *, base_directory=None, pcm_cavity=None):
     """Return a workflow job or let the original single-point parser handle it."""
     lines = text.splitlines()
     route_index = next((i for i, line in enumerate(lines) if line.lstrip().startswith("#")), None)
@@ -42,6 +44,7 @@ def read_job(text, protected_paths):
     if len(sections) < 3:
         raise ValueError("Expected Gaussian route, title and molecule sections.")
 
+    base_directory = Path.cwd() if base_directory is None else base_directory
     link = []
     paths = {}
     memory_mb = None
@@ -52,7 +55,7 @@ def read_job(text, protected_paths):
             name = name.lower()
             if name in paths:
                 raise ValueError(f"Repeated %{name} directive.")
-            paths[name] = Path(value).resolve()
+            paths[name] = (base_directory / value).resolve()
             continue
         match = re.fullmatch(r"\s*%mem\s*=\s*([1-9]\d*)\s*(mb|gb)\s*", line, re.I)
         if match:
@@ -84,6 +87,8 @@ def read_job(text, protected_paths):
             value = token.partition("=")[2]
             options = value.removeprefix("(").removesuffix(")").split(",") if value else ["minimum"]
             opt = frozenset(option.strip() for option in options)
+            if "modredun" in opt:
+                opt = (opt - {"modredun"}) | {"modredundant"}
             if opt - {"minimum", "modredundant", "nofreeze", "ts", "rcfc", "noeigentest"}:
                 raise ValueError(f"Unsupported optimization options: {token}")
         elif token == "freq":
@@ -100,7 +105,7 @@ def read_job(text, protected_paths):
             remaining.append(token)
 
     if "modredundant" in opt and opt & {"ts", "nofreeze", "rcfc"}:
-        raise ValueError("This dihedral scan requires Opt=ModRedundant without TS, RCFC or NoFreeze.")
+        raise ValueError("This scan requires Opt=ModRedundant without TS, RCFC or NoFreeze.")
     if opt & {"rcfc", "noeigentest"} and "ts" not in opt:
         raise ValueError("RCFC and NoEigenTest are supported with Opt=TS.")
     seed = None
@@ -129,22 +134,39 @@ def read_job(text, protected_paths):
             f"{symbol} " + " ".join(map(str, center * ANGSTROM_PER_BOHR))
             for symbol, center in zip(seed["symbols"], seed["centers"], strict=True)
         )
+    coordinate_lines = geometry.splitlines()
+    for index, line in enumerate(coordinate_lines[1:], start=1):
+        fields = line.split()
+        if len(fields) == 4 and fields[0].isdecimal():
+            atomic_number = int(fields[0])
+            if 1 <= atomic_number <= len(ELEMENTS):
+                coordinate_lines[index] = " ".join((ELEMENTS[atomic_number - 1], *fields[1:]))
+    geometry = "\n".join(coordinate_lines)
     molecule = parse_gaussian("\n".join([*link, " ".join(remaining), "", sections[1], "", geometry]))
     extra = sections[3].strip() if len(sections) == 4 else ""
     scan = None
     if "modredundant" in opt:
         match = re.fullmatch(
-            r"(?:D\s+)?(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+S\s+(\d+)\s+([+-]?[\d.eE+-]+)",
+            r"(?:(B|D)\s+)?(\d+(?:\s+\d+){1,3})\s+S\s+(\d+)\s+([+-]?[\d.eE+-]+)",
             extra, re.I,
         )
         if not match:
-            raise ValueError("Expected one dihedral scan line: [D] i j k l S steps increment.")
-        indices = tuple(int(index) - 1 for index in match.groups()[:4])
-        steps, increment = int(match[5]), float(match[6])
-        if (len(set(indices)) != 4 or min(indices) < 0 or max(indices) >= len(molecule.symbols)
-                or steps < 1 or not np.isfinite(increment) or not 0 < abs(increment) < 180):
-            raise ValueError("Invalid dihedral scan indices, steps or increment.")
+            raise ValueError("Expected one bond or dihedral ModRedundant scan line.")
+        kind, atoms, steps, increment = match.groups()
+        indices = tuple(int(index) - 1 for index in atoms.split())
+        steps, increment = int(steps), float(increment)
+        count = len(indices)
+        if (count not in (2, 4) or (kind and count != {"B": 2, "D": 4}[kind.upper()])
+                or len(set(indices)) != count or min(indices) < 0 or max(indices) >= len(molecule.symbols)
+                or steps < 1 or not np.isfinite(increment) or increment == 0
+                or (count == 4 and abs(increment) >= 180)):
+            raise ValueError("Invalid scan indices, steps or increment.")
         scan = indices, steps, increment
     elif extra:
         raise ValueError("Unexpected section after Gaussian coordinates.")
-    return Job(molecule, opt, freq, scan, checkpoint, seed, guess_read, memory_mb, conventional_cycles)
+    saved_cavity = str(seed.get("pcm_cavity", "native")) if seed is not None else "native"
+    cavity = saved_cavity if pcm_cavity is None else pcm_cavity
+    if (guess_read or "rcfc" in opt) and cavity != saved_cavity:
+        raise ValueError("Checkpoint C-PCM cavity differs from the requested profile.")
+    validate_cavity(cavity, molecule)
+    return Job(molecule, opt, freq, scan, checkpoint, seed, guess_read, memory_mb, conventional_cycles, cavity)

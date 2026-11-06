@@ -65,28 +65,35 @@ class _Surface:
             **({"max_memory": job.memory_mb} if job.memory_mb is not None else {}),
         )
         self.cache = None
+        self.cache_grid = molecule.grid_level
+        self.scf = None
+        self.opt_grid = None
+        self.distributed_xc = None
+        self.distributed_gradient = None
+        self.analytic_freq = False
         self.density = job.seed.get("density") if job.guess_read else None
         if job.guess_read and self.density is None:
             raise ValueError("Guess=Read requires a saved density matrix.")
 
-    def evaluate(self, coordinates, *, gradient=True, reuse=True):
+    def evaluate(self, coordinates, *, gradient=True, reuse=True, grid_level=None):
         coordinates = np.asarray(coordinates)
-        if (reuse and self.cache is not None and np.array_equal(coordinates, self.cache[0])
-                and (not gradient or self.cache[2] is not None)):
-            return self.cache[1:]
         molecule = self.job.molecule
-        mol = self.template.set_geom_(coordinates.reshape(-1, 3), unit="Bohr", inplace=False)
-        mf = self.dft.UKS(mol)
-        mf.xc = "b3lyp"
-        mf.chkfile = None
-        mf.grids.level = molecule.grid_level
-        mf.conv_tol = 1e-11
-        mf.max_cycle = self.job.conventional_cycles or self.max_cycles
-        if molecule.dispersion:
-            mf.disp = "d3bj"
-        if molecule.solvent:
-            mf = mf.PCM(molecule.solvent)
-            mf.with_solvent.method = "C-PCM"
+        grid_level = molecule.grid_level if grid_level is None else grid_level
+        if (reuse and self.cache is not None and grid_level == self.cache_grid
+                and np.array_equal(coordinates, self.cache[0])):
+            if not gradient or self.cache[2] is not None:
+                return self.cache[1:]
+            if self.scf is not None:
+                _, energy, _, density = self.cache
+                nuclear_gradient = self._gradient(self.scf)
+                self.cache = self.cache[0], energy, nuclear_gradient, density
+                if not self.analytic_freq:
+                    self.scf = None
+                return self.cache[1:]
+        if reuse:
+            self.scf = None
+        mf = self.new_scf(coordinates, grid_level)
+        mol = mf.mol
         density_shape = (2, mol.nao, mol.nao)
         if self.density is not None and (
             self.density.shape != density_shape or not np.isfinite(self.density).all()
@@ -101,18 +108,54 @@ class _Surface:
             mf.converged, mf.e_tot = newton.converged, newton.e_tot
         if not mf.converged or not np.isfinite(energy):
             raise RuntimeError("SCF did not converge during the geometry workflow.")
-        nuclear_gradient = None
-        if gradient:
-            derivative = mf.nuc_grad_method()
-            derivative.grid_response = True
-            nuclear_gradient = derivative.kernel().ravel()
-            if not np.isfinite(nuclear_gradient).all():
-                raise RuntimeError("Non-finite nuclear gradient.")
+        nuclear_gradient = self._gradient(mf) if gradient else None
         density = np.asarray(mf.make_rdm1())
         if reuse:
             self.cache = coordinates.copy(), float(energy), nuclear_gradient, density
+            self.cache_grid = grid_level
             self.density = density
+            if self.analytic_freq or not gradient:
+                self.scf = mf
         return float(energy), nuclear_gradient, density
+
+    def new_scf(self, coordinates, grid_level):
+        molecule = self.job.molecule
+        mol = self.template.set_geom_(coordinates.reshape(-1, 3), unit="Bohr", inplace=False)
+        mf = self.dft.UKS(mol)
+        mf.xc = "b3lyp"
+        if self.opt_grid is not None:
+            self.opt_grid.attach_scf(mf)
+        if self.distributed_xc is not None:
+            mf._numint = self.distributed_xc
+        mf.chkfile = None
+        mf.grids.level = grid_level
+        mf.conv_tol = 1e-11
+        mf.max_cycle = self.job.conventional_cycles or self.max_cycles
+        if molecule.dispersion:
+            mf.disp = "d3bj"
+        if molecule.solvent:
+            from .freq_pcm import FrequencyCPCM
+
+            cavity = FrequencyCPCM(mol, molecule.solvent)
+            if self.job.pcm_cavity == "gaussian-uff":
+                from .pcm_profile import configure_cavity
+
+                configure_cavity(cavity, molecule)
+            mf = mf.PCM(cavity)
+        return mf
+
+    def _gradient(self, mf):
+        derivative = mf.nuc_grad_method()
+        derivative.grid_response = True
+        if self.opt_grid is not None:
+            self.opt_grid.attach_gradient(derivative)
+        if self.distributed_gradient is None:
+            gradient = derivative.kernel().ravel()
+        else:
+            gradient = self.distributed_gradient.gradient(derivative).ravel()
+        if not np.isfinite(gradient).all():
+            raise RuntimeError("Non-finite nuclear gradient.")
+        return gradient
 
     def objective(self, coordinates):
         energy, gradient, _ = self.evaluate(coordinates)
@@ -198,6 +241,8 @@ def _transition_state(surface, coordinates, masses, hessian, check_index):
 def run_job(job, prefix, *, max_cycles):
     if max_cycles < 1:
         raise ValueError("max-cycles must be positive.")
+    if job.scan and len(job.scan[0]) == 2:
+        raise ValueError("Bond scans require --scan-hosts; supply one host for a single-node run.")
     molecule = job.molecule
     coordinates = molecule.centers.ravel().copy()
     rcfc = "rcfc" in job.opt
@@ -280,3 +325,14 @@ def run_job(job, prefix, *, max_cycles):
             emit(f"YoungCC checkpoint written to {job.checkpoint}")
         Path(f"{prefix}.json").write_text(json.dumps(result, indent=2, allow_nan=False) + "\n", encoding="utf-8")
         emit("YoungCC calculation completed.")
+
+
+def _checkpoint_metadata(molecule, pcm_cavity="native"):
+    metadata = {
+        "symbols": list(molecule.symbols), "charge": molecule.charge, "multiplicity": molecule.multiplicity,
+        "method": molecule.method, "basis": molecule.basis, "solvent": molecule.solvent or "",
+        "dispersion": molecule.dispersion or "", "grid_level": molecule.grid_level,
+    }
+    if pcm_cavity != "native":
+        metadata["pcm_cavity"] = pcm_cavity
+    return metadata
